@@ -1,0 +1,75 @@
+import "allegro.jazz"
+import "std/libc.jazz"
+pub func main() i32 {
+    var display: *ALLEGRO_DISPLAY = null as *ALLEGRO_DISPLAY;
+    var event_queue: *ALLEGRO_EVENT_QUEUE = null as *ALLEGRO_EVENT_QUEUE;
+    var timer: *ALLEGRO_TIMER = null as *ALLEGRO_TIMER;
+
+    if !al_init {
+        fprintf(stderr,"FAILED\n");
+        return 1;
+    }
+
+    display = al_create_display(800,600);
+    al_set_window_title(display,"Hello,World!");
+    event_queue = al_create_event_queue();
+
+    timer = al_create_timer(1.0 / 60.0);
+    al_install_keyboard();
+    al_init_font_addon();
+    al_init_ttf_addon();
+
+    var font = al_load_ttf_font("FiraCode-Medium.otf",36,0);
+    var font_smaller = al_load_ttf_font("FiraCode-Medium.otf",18,0);
+    al_register_event_source(event_queue,al_get_display_event_source(display));
+    al_register_event_source(event_queue, al_get_timer_event_source(timer));
+    al_register_event_source(event_queue, al_get_keyboard_event_source());
+    var color = al_map_rgb(0 as u8,0 as u8,0 as u8);
+    al_clear_to_color(color);
+    al_flip_display();
+
+    al_start_timer(timer);
+
+    var running = true;
+    var redraw = true;
+
+    while running {
+        var event: *ALLEGRO_EVENT = malloc(512 as usize) as *ALLEGRO_EVENT;
+        var timeout: *ALLEGRO_TIMEOUT = malloc(sizeof(ALLEGRO_TIMEOUT)) as *ALLEGRO_TIMEOUT;
+
+        al_init_timeout(timeout,0.06);
+
+        var get_event = al_wait_for_event_until(event_queue,event,timeout);
+
+        if get_event {
+            if event.ty == ALLEGRO_EVENT_TIMER {
+                redraw = true;
+            } else if event.ty == ALLEGRO_EVENT_DISPLAY_CLOSE {
+                redraw = false;
+            } else if event.ty == ALLEGRO_EVENT_KEY_DOWN {
+                var state: ALLEGRO_KEYBOARD_STATE;
+                al_get_keyboard_state(&state);
+                if al_key_down(&state,ALLEGRO_KEY_ESCAPE) {
+                    running = false;
+                }
+                
+            } else {
+                printf("Unsupported event type: %i\n",event.ty)
+            }
+        }
+
+        if redraw && al_is_event_queue_empty(event_queue) {
+            al_clear_to_color(al_map_rgb(0 as u8,0 as u8,0 as u8));
+            al_draw_text(font,al_map_rgb(255 as u8,255 as u8,255 as u8),800.0 as f32 / 2.0 as f32,(800.0 as f32 / 4.0 as f32) + 30.0 as f32,ALLEGRO_ALIGN_CENTRE,"Hello World from Allegro 5!");
+            al_draw_text(font,al_map_rgb(255 as u8,255 as u8,255 as u8),800.0 as f32 / 2.0 as f32,(800.0 as f32 / 4.0 as f32) + 80.0 as f32,ALLEGRO_ALIGN_CENTRE,"(Press ESC key to exit program)");
+            al_flip_display();
+            redraw = false;
+        }
+
+    }
+
+    al_destroy_display(display);
+    al_destroy_event_queue(event_queue);
+
+    return 0;
+}
