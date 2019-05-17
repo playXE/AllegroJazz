@@ -3,6 +3,8 @@ link "allegro_color"
 link "allegro_audio"
 link "allegro_font"
 link "allegro_ttf"
+link "allegro_acodec"
+link "allegro_primitives"
 
 constexpr ALLEGRO_RELEASE_NUMBER = 1
 constexpr ALLEGRO_VERSION_STR = "5.2.4"
@@ -807,3 +809,71 @@ x: f32,y: f32,flags: i32,format: *char) void;
 constexpr ALLEGRO_ALIGN_CENTRE = 1
 constexpr ALLEGRO_ALIGN_LEFT = 0
 constexpr ALLEGRO_ALIGN_RIGHT = 2
+
+pub extern func al_draw_filled_rectangle(x1: f32,y1: f32,x2: f32,y2: f32,color: ALLEGRO_COLOR) void;
+
+constexpr ALLEGRO_EVENT_AUDIO_STREAM_FRAGMENT   = 513
+constexpr ALLEGRO_EVENT_AUDIO_STREAM_FINISHED   = 514
+constexpr ALLEGRO_AUDIO_DEPTH_INT8      = 0x00
+constexpr ALLEGRO_AUDIO_DEPTH_INT16     = 0x01
+constexpr ALLEGRO_AUDIO_DEPTH_INT24     = 0x02
+constexpr ALLEGRO_AUDIO_DEPTH_FLOAT32   = 0x03
+constexpr ALLEGRO_AUDIO_DEPTH_UNSIGNED  = 0x08
+constexpr ALLEGRO_AUDIO_DEPTH_UINT8  = ALLEGRO_AUDIO_DEPTH_INT8 |
+                                 ALLEGRO_AUDIO_DEPTH_UNSIGNED
+
+constexpr ALLEGRO_AUDIO_DEPTH_UINT16 = ALLEGRO_AUDIO_DEPTH_INT16 |
+                                 ALLEGRO_AUDIO_DEPTH_UNSIGNED
+                  
+constexpr ALLEGRO_AUDIO_DEPTH_UINT24 = ALLEGRO_AUDIO_DEPTH_INT24 |
+                                 ALLEGRO_AUDIO_DEPTH_UNSIGNED
+
+constexpr ALLEGRO_CHANNEL_CONF_1 = 0x10
+constexpr ALLEGRO_CHANNEL_CONF_2 = 0x20
+constexpr ALLEGRO_CHANNEL_CONF_3 = 0x30
+constexpr ALLEGRO_CHANNEL_CONF_4 = 0x40
+constexpr ALLEGRO_CHANNEL_CONF_5_1 = 0x51
+constexpr ALLEGRO_CHANNEL_CONF_6_1 = 0x61
+constexpr ALLEGRO_CHANNEL_CONF_7_1 = 0x71
+
+constexpr ALLEGRO_MIXER_QUALITY_POINT = 0x110
+constexpr ALLEGRO_MIXER_QUALITY_LINEAR = 0x111
+constexpr ALLEGRO_MIXER_QUALITY_CUBIC = 0x112
+
+pub struct ALLEGRO_SAMPLE {}
+pub struct ALLEGRO_SAMPLE_ID {
+   _index: i32,
+   _id: i32
+}
+
+pub struct ALLEGRO_SAMPLE_INSTANCE {}
+pub struct ALLEGRO_AUDIO_STREAM {}
+pub struct ALLEGRO_MIXER {}
+pub struct ALLEGRO_VOICE {}
+pub extern func al_create_sample(buf: *u8,samples: i32,freq: i32,depth: i32,cconf: i32,freq_buf: bool) *ALLEGRO_SAMPLE;
+pub extern func al_destroy_sample(spl: *ALLEGRO_SAMPLE) void;
+pub extern func al_create_sample_instance(data: *ALLEGRO_SAMPLE) *ALLEGRO_SAMPLE_INSTANCE;
+pub extern func al_get_sample_frequency(spl: *ALLEGRO_SAMPLE) i32;
+pub extern func al_get_sample_length(spl: *ALLEGRO_SAMPLE) i32;
+pub extern func al_get_sample_depth(spl: *ALLEGRO_SAMPLE) i32;
+pub extern func al_get_sample_channels(spl: *ALLEGRO_SAMPLE) i32;
+pub extern func al_get_sample_instance_frequency(spl: *ALLEGRO_SAMPLE_INSTANCE) i32;
+pub extern func al_get_sample_instance_length(spl: *ALLEGRO_SAMPLE_INSTANCE) i32;
+pub extern func al_get_sample_instance_position(spl: *ALLEGRO_SAMPLE_INSTANCE) i32;
+pub extern func al_install_audion() bool;
+pub extern func al_uninstall_audio() void;
+pub extern func al_is_audio_installed() bool;
+pub extern func al_reserve_samples(r: i32) bool;
+constexpr ALLEGRO_PLAYMODE_ONCE = 0x100
+constexpr ALLEGRO_PLAYMODE_LOOP = 0x101
+constexpr ALLEGRO_PLAYMODE_BIDIR = 0x102
+
+pub extern func al_play_sample(data: *ALLEGRO_SAMPLE,gain: f32,pan: f32,s: f32,playmode: i32,ret_id: *ALLEGRO_SAMPLE_ID) bool;
+pub extern func al_stop_sample(spl_id: *ALLEGRO_SAMPLE_ID) void;
+pub extern func al_stop_samples() void;
+pub extern func al_load_sample(file: *char) *ALLEGRO_SAMPLE;
+pub extern func al_sav_sample(file: *char,spl: *ALLEGRO_SAMPLE) bool;
+pub extern func al_init_acodec_addon() void;
+pub extern func al_install_audio() bool;
+pub extern func al_init_primitives_addon() void;
+pub extern func al_draw_line(x1: f32,y1: f32,x2: f32,y2: f32,color: ALLEGRO_COLOR,thickness: f32) void;
